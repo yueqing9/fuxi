@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GDP数据可视化</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
+    <div id='scatter' style="height:400px;width:600px;display:inline-block;"></div>
+    <div id='pie' style="height:400px;width:600px;display:inline-block;"></div>
+    <script>
+        fetch('data.csv').then(r => r.text()).then(data => {
+            const rows = data.split('\n').slice(1).map(line => line.split(','));
+            const [countries, industries, gdps] = [
+                rows.map(r => r[0]),
+                rows.map(r => r.slice(1, 4).map(Number)),
+                rows.map(r => +r[4])
+            ];
+
+            const scatter = echarts.init(document.getElementById('scatter'));
+            const pie = echarts.init(document.getElementById('pie'));
+
+            scatter.setOption({
+                tooltip: {
+                    formatter: (params) => {
+                        const i = params.dataIndex;
+                        return `${countries[i]}<br/>
+                                GDP总额: ${gdps[i]}<br/>
+                                第一产业: ${industries[i][0]}<br/>
+                                第二产业: ${industries[i][1]}<br/>
+                                第三产业: ${industries[i][2]}`;
+                    }
+                },
+                xAxis: { type: 'category', data: countries },
+                yAxis: { type: 'value' },
+                series: [{
+                    type: 'scatter',
+                    data: gdps.map((gdp, i) => [i, gdp]),
+                    symbolSize: 20
+                }]
+            });
+
+            const updatePie = (index) => {
+                pie.setOption({
+                    title: { text: `${countries[index]} GDP构成` },
+                    tooltip: {
+                        formatter: '{b}: {c} ({d}%)'
+                    },
+                    series: [{
+                        type: 'pie',
+                        data: ['第一产业', '第二产业', '第三产业'].map((name, i) => ({
+                            name, value: industries[index][i]
+                        }))
+                    }]
+                });
+            };
+
+            updatePie(0);
+            scatter.on('click', (params) => updatePie(params.dataIndex));
+        });
+    </script>
+</body>
+</html>
