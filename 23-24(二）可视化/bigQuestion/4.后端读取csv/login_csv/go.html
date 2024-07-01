@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GDP数据可视化</title>
+    <style>
+        .box { height: 400px; width: 1200px; border: 1px solid black; display: inline-block; }
+    </style>
+    <script src='echarts.js'></script>
+</head>
+<body>   
+    <div class='box' id='main1'></div>
+    <div class='box' id='main2'></div>
+    <script>
+        fetch('data.csv').then(response => response.text()).then(data => {
+            const [header, ...rows] = data.split('\n').map(line => line.split(','));
+            const countries = rows.map(row => row[0]);
+            const gdpValues = rows.map(row => parseInt(row[4]));
+            const industryData = rows.map(row => row.slice(1, 4).map(Number));
+
+            const scatterChart = echarts.init(document.getElementById('main1'));
+            const scatterOption = {
+                tooltip: {
+                    formatter: params => `${params.name}<br/>
+                                           第一产业: ${industryData[params.dataIndex][0]}<br/>
+                                           第二产业: ${industryData[params.dataIndex][1]}<br/>
+                                           第三产业: ${industryData[params.dataIndex][2]}<br/>
+                                           GDP总额: ${gdpValues[params.dataIndex]}`
+                },
+                xAxis: { type: 'category', data: countries },
+                yAxis: { type: 'value' },
+                series: [{
+                    type: 'scatter',
+                    data: countries.map((country, index) => [country, gdpValues[index]]),
+                    symbolSize: 20
+                }]
+            };
+            scatterChart.setOption(scatterOption);
+
+            const pieChart = echarts.init(document.getElementById('main2'));
+            const drawPie = (data, country) => {
+                const pieOption = {
+                    title: { text: `${country} GDP构成`, left: 'center' },
+                    tooltip: { formatter: params => `${params.name}: ${params.value} (${params.percent}%)` },
+                    legend: { orient: 'vertical', left: 'left' },
+                    series: [{
+                        type: 'pie',
+                        data: ['第一产业', '第二产业', '第三产业'].map((name, i) => ({ name, value: data[i] }))
+                    }]
+                };
+                pieChart.setOption(pieOption);
+            };
+
+            drawPie(industryData[0], countries[0]);
+            scatterChart.on('click', params => drawPie(industryData[params.dataIndex], countries[params.dataIndex]));
+        });
+    </script>
+</body>
+</html>

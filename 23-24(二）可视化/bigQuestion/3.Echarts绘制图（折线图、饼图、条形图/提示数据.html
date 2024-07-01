@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECharts 图表展示</title>
+    <script src="echarts.js"></script>
+    <style>
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .box {
+            width: 600px;
+            height: 400px;
+            border: 1px black solid;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <div id="barChart" class="box"></div>
+        <div id="lineChart" class="box"></div>
+        <div id="pieChart" class="box"></div>
+        <div id="scatterChart" class="box"></div>
+    </div>
+
+    <script>
+        // 柱状图
+        var barChart = echarts.init(document.getElementById('barChart'));
+        var barOption = {
+            title: { text: 'GDP 各国家总额' },
+            tooltip: { trigger: 'axis' },
+            xAxis: { type: 'category', data: ['国家1', '国家2', '国家3'] },
+            yAxis: { type: 'value' },
+            series: [
+                { name: '国家GDP总额', type: 'bar', data: [175, 612, 372] },
+            ]
+        };
+        barChart.setOption(barOption);
+
+        // 折线图
+        var lineChart = echarts.init(document.getElementById('lineChart'));
+        var lineOption = {
+            title: { text: 'GDP 总额趋势' },
+            tooltip: { trigger: 'axis' },
+            xAxis: { type: 'category', data: ['国家1', '国家2', '国家3'] },
+            yAxis: { type: 'value' },
+            series: [
+                { name: 'GDP总额', type: 'line', data: [175, 612, 372] }
+            ]
+        };
+        lineChart.setOption(lineOption);
+
+        // 饼图
+        var pieChart = echarts.init(document.getElementById('pieChart'));
+        var pieOption = {
+            title: { text: '国家 GDP 总额', left: 'center' },
+            tooltip: { trigger: 'item' },
+            legend: { orient: 'vertical', left: 'left' },
+            series: [{    
+                type: 'pie',
+                radius: '50%',
+                data: [
+                    {value: 175, name: '国家1'},
+                    {value: 612, name: '国家2'},
+                    {value: 372, name: '国家3'}
+                ],
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }]
+        };
+        pieChart.setOption(pieOption);
+         // 散点图
+        var scatterChart = echarts.init(document.getElementById('scatterChart'));
+        var scatterOption = {
+            title: { text: '国家 GDP 总额' },
+            tooltip: { trigger: 'item' }, 
+            xAxis: { type: 'category', data: ['国家1', '国家2', '国家3'] },
+            yAxis: { type: 'value' },
+            series: [{
+                name: 'GDP 总额',
+                type: 'scatter',
+                data: [175, 612, 372]
+            }]
+        };
+        scatterChart.setOption(scatterOption);
+
+    </script>
+</body>
+</html>
