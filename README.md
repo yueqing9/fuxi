@@ -1,3 +1,6 @@
+![image](https://github.com/user-attachments/assets/0e57ca0c-5f87-47f1-a963-c0e0a14cef82)
+
+
 1.填空
 
 1、构建—个类，输入—个数组(10个数)
